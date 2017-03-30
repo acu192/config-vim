@@ -36,17 +36,21 @@ nnoremap <leader>s :w<CR>
 inoremap <leader>s <ESC>:w<CR>a
 
 " Custom command: make.
-nnoremap <leader>r :!make<CR>
-inoremap <leader>r <ESC>:!make<CR>
+nnoremap <leader>r :w<CR>:!make<CR>
+inoremap <leader>r <ESC>:w<CR>:!make<CR>
 
 " Custom command: quit the editor.
-nnoremap <leader>q :q<CR>
+nnoremap <leader>q :wq<CR>
+inoremap <leader>q <ESC>:wq<CR>
 
 " Custom commands: easy buffer navigation.
 nnoremap <leader>l :ls<CR>
 nnoremap <leader>n :bnext<CR>
-nnoremap <leader>N :bprev<CR>
+nnoremap <leader>b :bprev<CR>
 nnoremap <leader>x :bdelete<CR>
+
+" Clear the current highlighted search term.
+nnoremap <leader>f :nohlsearch<CR>
 
 " Custom commands: comment and uncomment code.
 autocmd FileType c,cpp,java,scala let b:comment_leader = '// '
@@ -55,7 +59,7 @@ autocmd FileType conf,fstab,make  let b:comment_leader = '# '
 autocmd FileType tex              let b:comment_leader = '% '
 autocmd FileType mail             let b:comment_leader = '> '
 autocmd FileType vim              let b:comment_leader = '" '
-noremap <silent> <leader>cc :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
+noremap <silent> <leader>cc :<C-B>silent <C-E>s/^\(.\)/\=escape(b:comment_leader,'\/').submatch(1)<CR>:nohlsearch<CR>
 noremap <silent> <leader>cu :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
 
 " Smart way to move between windows.
@@ -84,19 +88,22 @@ endif
 " Switch to previous buffer.
 nmap <F2> :b#<CR>
 imap <F2> <Esc>:b#<CR>
+nmap <leader>2 :b#<CR>
+imap <leader>2 <Esc>:b#<CR>
 
 " Switch between header/source.
 nmap <silent> <F3> :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
 imap <silent> <F3> <Esc>:e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+nmap <silent> <leader>3 :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+imap <silent> <leader>3 <Esc>:e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
 
 " Turn on/off spelling easily.
 nmap <silent> <F5> :set spell!<CR>
+nmap <silent> <leader>5 :set spell!<CR>
 
 " Turn on/off line wrapping easily.
 nmap <silent> <F6> :set wrap!<CR>
-
-" Create tags for all C++ files in the pwd (recursively).
-nmap <C-\> :!ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .<CR>
+nmap <silent> <leader>6 :set wrap!<CR>
 
 " Make jj be escape (because the escape key is so far away...).
 imap jj <Esc>
@@ -155,7 +162,8 @@ set number
 set showmatch
 
 " Intelligent comments.
-set comments=sl:/*,mb:\ *,elx:\ */
+"set comments=sl:/*,mb:\ *,elx:\ */
+set formatoptions+=rco   " http://stackoverflow.com/questions/951555/insert-comments-automatically-in-vim
 
 " Use case-insensitivity unless there is a capital letter in the search pattern.
 set ignorecase smartcase
@@ -177,13 +185,6 @@ set noswapfile
 
 " Don't create an undo file.
 set noundofile
-
-" Tell vim to search for tags from the pwd to the root.
-set tags=tags;/
-
-" Add the cpp standard library tags.
-set tags+=~/.vim/tags/stl
-set tags+=~/.vim/tags/gl
 
 " Highlights trailing white space and delete it when the file is saved.
 highlight ExtraWhitespace ctermbg=lightgreen guibg=lightgreen
